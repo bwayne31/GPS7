@@ -294,11 +294,13 @@
             let currentHoleIndex = 0;
             const scores = new Array(courseData.holes.length).fill(null);
             
-            // The proximity threshold for auto-advancing has been updated to 15 yards.
-            const proximityThreshold = 15;
-            // The proximity threshold for the final hole has also been updated to 50 yards.
-            const finalProximityThreshold = 50;
-            let watcherId; // To store the watchPosition ID
+            // Proximity thresholds for auto-advancing and switching GPS modes
+            const proximityThresholdHighAccuracy = 50; // In yards, for switching to high-accuracy GPS
+            const proximityThresholdAdvance = 15; // In yards, for auto-advancing to the next hole
+            const finalProximityThreshold = 50; // In yards, for the final hole
+            
+            let watcherId = null; // To store the watchPosition ID
+            let gpsState = 'low-power'; // 'low-power' or 'high-accuracy'
             
             // ====================================================================
             // Shot Tracker specific variable
@@ -435,6 +437,104 @@
                     });
                 }
             }
+            
+            // Function to start the high-accuracy GPS watcher
+            function startHighAccuracyWatcher() {
+                if (watcherId !== null) {
+                    navigator.geolocation.clearWatch(watcherId);
+                }
+                watcherId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        checkAndAdvance(position);
+                    },
+                    (error) => {
+                        document.getElementById('message-area').textContent = 'Error: ' + error.message;
+                        console.error("Geolocation error:", error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+                gpsState = 'high-accuracy';
+                document.getElementById('message-area').textContent = 'High-accuracy GPS active.';
+                console.log('Switched to high-accuracy GPS.');
+            }
+
+            // Function to start the low-power GPS watcher
+            function startLowPowerWatcher() {
+                if (watcherId !== null) {
+                    navigator.geolocation.clearWatch(watcherId);
+                }
+                watcherId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        checkAndAdvance(position);
+                    },
+                    (error) => {
+                        document.getElementById('message-area').textContent = 'Error: ' + error.message;
+                        console.error("Geolocation error:", error);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 10000,
+                        maximumAge: 60000 // Only get a new position once a minute
+                    }
+                );
+                gpsState = 'low-power';
+                document.getElementById('message-area').textContent = 'Low-power GPS active.';
+                console.log('Switched to low-power GPS.');
+            }
+
+            // Function to check location and switch GPS mode
+            function checkAndAdvance(position) {
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
+                const currentHole = courseData.holes[currentHoleIndex];
+                
+                // Check distance to the center of the current green
+                const distToGreen = haversine(userLat, userLon, currentHole.center[0], currentHole.center[1]);
+                
+                // Check distance to the next tee box to auto-advance
+                if (currentHoleIndex < courseData.holes.length - 1) {
+                    const nextHole = courseData.holes[currentHoleIndex + 1];
+                    const distToNextTee = haversine(userLat, userLon, nextHole.tee[0], nextHole.tee[1]);
+                    
+                    if (distToNextTee <= proximityThresholdAdvance && scores[currentHoleIndex] === null) {
+                        // Auto-advance to score entry
+                        showScoreEntry(currentHole.hole);
+                        document.getElementById('message-area').textContent = `Arrived at the next tee box. Please enter your score for the last hole.`;
+                        // Switch to low-power mode once score entry is triggered, as we're not actively playing this hole anymore.
+                        startLowPowerWatcher();
+                        return; // Exit the function to prevent further updates
+                    }
+                } else {
+                    // Special logic for the final hole
+                    const distToClubhouse = haversine(userLat, userLon, clubhouseCoordinates[0], clubhouseCoordinates[1]);
+                    if (distToClubhouse <= finalProximityThreshold && scores[currentHoleIndex] === null) {
+                        showScoreEntry(currentHole.hole);
+                        document.getElementById('message-area').textContent = `You're near the clubhouse! Please enter your score for the final hole.`;
+                        // Switch to low-power mode
+                        startLowPowerWatcher();
+                        return;
+                    }
+                }
+
+                // If the user is close to the green, switch to high-accuracy mode
+                if (distToGreen <= proximityThresholdHighAccuracy) {
+                    if (gpsState === 'low-power') {
+                        startHighAccuracyWatcher();
+                    }
+                    displayDistances(position);
+                } else {
+                    // If the user is far from the green and in high-accuracy mode, switch back to low-power
+                    if (gpsState === 'high-accuracy') {
+                        startLowPowerWatcher();
+                    }
+                    displayDistances(position);
+                }
+            }
+
 
             // Function to show the score entry view for a specific hole
             function showScoreEntry(holeNumber) {
@@ -456,63 +556,20 @@
                 scores[currentHoleIndex] = parseInt(score);
                 document.getElementById('score-entry-message').textContent = `Score of ${score} saved for Hole ${courseData.holes[currentHoleIndex].hole}.`;
                 
-                currentHoleIndex++;
+                // Only increment if we're not on the last hole
+                if (currentHoleIndex < courseData.holes.length - 1) {
+                    currentHoleIndex++;
+                    updateUI();
+                } else {
+                    // On the last hole, we show the scorecard
+                    showScorecard();
+                }
+
                 document.getElementById('score-entry-view').classList.add('hidden');
                 document.getElementById('main-view').classList.remove('hidden');
-                updateUI();
+                
+                // Get fresh distances for the next hole
                 navigator.geolocation.getCurrentPosition(displayDistances);
-            }
-            
-            // Main function to watch the user's position and update the UI
-            function watchGolfPosition() {
-                const messageArea = document.getElementById('message-area');
-                if ("geolocation" in navigator) {
-                    messageArea.textContent = 'Watching your location...';
-
-                    watcherId = navigator.geolocation.watchPosition(
-                        (position) => {
-                            const userLat = position.coords.latitude;
-                            const userLon = position.coords.longitude;
-                            
-                            if (currentHoleIndex === courseData.holes.length - 1 && scores[currentHoleIndex] === null) {
-                                const distToClubhouse = haversine(userLat, userLon, clubhouseCoordinates[0], clubhouseCoordinates[1]);
-                                if (distToClubhouse <= finalProximityThreshold) {
-                                    showScoreEntry(courseData.holes[currentHoleIndex].hole);
-                                    messageArea.textContent = `You're near the clubhouse! Please enter your score for the final hole.`;
-                                } else {
-                                    displayDistances(position);
-                                    messageArea.textContent = 'Distances updated.';
-                                }
-                            } else if (currentHoleIndex < courseData.holes.length - 1) {
-                                const nextHole = courseData.holes[currentHoleIndex + 1];
-                                const distToNextTee = haversine(userLat, userLon, nextHole.tee[0], nextHole.tee[1]);
-                                
-                                if (distToNextTee <= proximityThreshold && scores[currentHoleIndex] === null) {
-                                    showScoreEntry(courseData.holes[currentHoleIndex].hole);
-                                    messageArea.textContent = `Arrived at the next tee box. Please enter your score for the last hole.`;
-                                } else {
-                                    displayDistances(position);
-                                    messageArea.textContent = 'Distances updated.';
-                                }
-                            } else {
-                                // For the final hole after scoring, just show the scorecard
-                                showScorecard();
-                                messageArea.textContent = 'Round complete.';
-                            }
-                        },
-                        (error) => {
-                            messageArea.textContent = 'Error: ' + error.message;
-                            console.error("Geolocation error:", error);
-                        },
-                        {
-                            enableHighAccuracy: true,
-                            timeout: 5000,
-                            maximumAge: 0
-                        }
-                    );
-                } else {
-                    messageArea.textContent = "Geolocation is not supported by your browser.";
-                }
             }
             
             // Function to show the scorecard view and hide the main GPS view
@@ -731,7 +788,9 @@
 
             // Initial setup and start watching position
             updateUI();
-            watchGolfPosition();
+            
+            // Start with low-power GPS
+            startLowPowerWatcher();
         })();
     </script>
 </body>
