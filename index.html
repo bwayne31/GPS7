@@ -10,7 +10,7 @@
             font-family: 'Inter', sans-serif;
             transition: background-color 0.3s ease;
         }
-        /* Style the theme toggle icon */
+        /* Style the wake lock icon a bit thicker */
         .icon {
             stroke: currentColor;
             stroke-width: 2;
@@ -18,9 +18,12 @@
             stroke-linejoin: round;
             fill: none;
         }
-        /* Make the wake lock icon a bit thicker */
         #wake-lock-icon {
             stroke-width: 3;
+        }
+        /* Scorecard icon styles */
+        #scorecard-btn .scorecard-icon path {
+            fill: currentColor;
         }
     </style>
 </head>
@@ -31,19 +34,14 @@
         <div id="main-view" class="flex flex-col justify-between h-full">
             <!-- Controls and Settings -->
             <div class="flex justify-between items-center mb-6">
-                <!-- Dark Mode Toggle Button -->
-                <button id="theme-toggle-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
-                    <svg id="theme-icon" class="w-6 h-6 icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <!-- Sun icon by default -->
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                <!-- Scorecard Button -->
+                <button id="scorecard-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                    <svg class="scorecard-icon w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 8 9 8 11"></polyline>
                     </svg>
                 </button>
                 
@@ -54,7 +52,7 @@
                 </div>
                 
                 <!-- Wake Lock Toggle Button -->
-                <button id="wake-lock-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
+                <button id="wake-lock-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
                     <svg id="wake-lock-icon" class="w-6 h-6 icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -86,11 +84,13 @@
                 </div>
             </div>
             
-            <!-- Hazard Display -->
-            <div id="hazards-container" class="bg-orange-50 dark:bg-orange-900 rounded-2xl p-4 mb-6 shadow-inner transition-colors">
-                <h3 class="text-center text-sm font-semibold text-orange-800 dark:text-orange-200 mb-2">Hazards</h3>
-                <div id="hazards-list" class="text-center text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                    <!-- Hazards will be dynamically added here -->
+            <!-- Hazard Display - Now with Left and Right columns -->
+            <div class="flex justify-between space-x-2">
+                <div id="hazards-left" class="flex flex-col space-y-2 w-1/2 items-start">
+                    <!-- Left Hazards will be dynamically added here -->
+                </div>
+                <div id="hazards-right" class="flex flex-col space-y-2 w-1/2 items-end">
+                    <!-- Right Hazards will be dynamically added here -->
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
 
             <!-- Navigation and Actions -->
             <div class="flex items-center justify-between gap-4 mt-6">
-                <button id="prev-hole-btn" class="flex-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
+                <button id="prev-hole-btn" class="flex-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
                     Previous
                 </button>
                 <button id="next-hole-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors transform hover:scale-105">
@@ -113,18 +113,21 @@
             <div>
                 <h1 id="score-entry-title" class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 text-center mb-8">Score Hole 1</h1>
                 <div class="grid grid-cols-3 gap-4">
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="1">1</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="2">2</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="3">3</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="4">4</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="5">5</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="6">6</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="7">7</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="8">8</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="9">9</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="1">1</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="2">2</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="3">3</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="4">4</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="5">5</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="6">6</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="7">7</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="8">8</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="9">9</button>
                 </div>
             </div>
             <p id="score-entry-message" class="text-center text-sm font-medium h-6 mt-6 text-zinc-600 dark:text-zinc-400"></p>
+            <button id="cancel-score-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                Cancel
+            </button>
         </div>
 
         <!-- Scorecard View (hidden by default) -->
@@ -148,7 +151,10 @@
                     <span class="text-xl font-bold">Total Score</span>
                     <span id="total-score" class="text-4xl font-black">0</span>
                 </div>
-                <button id="start-new-round-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
+                <button id="back-to-course-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                    Back to Course
+                </button>
+                <button id="start-new-round-btn" class="mt-4 w-full bg-red-600 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-red-700 transition-colors transform hover:scale-105">
                     Start New Round
                 </button>
             </div>
@@ -192,8 +198,8 @@
                         center: [44.074227, -92.434211], 
                         back: [44.074301, -92.434349],
                         hazards: [
-                            { name: "Right Bunker", front: [44.073791332201665, -92.4325732153536], back: [44.073825055014325, -92.43290715036665] },
-                            { name: "Left Bunker", front: [44.073681492048536, -92.43348248419395], back: [44.07386070482263, -92.43383653576203] }
+                            { name: "Right Bunker", location: [44.073809, -92.432729] },
+                            { name: "Left Bunker", location: [44.073771, -92.433538] }
                         ]
                     },
                     { 
@@ -204,11 +210,27 @@
                         center: [44.072678, -92.433714], 
                         back: [44.072582, -92.433597], 
                         hazards: [
-                            { name: "Bunker", front: [44.07296298584522, -92.43384416400436], back: [44.0728455383541, -92.43355549598716] }
+                            { name: "Left Bunker", location: [44.07296298584522, -92.43384416400436] }
                         ]
                     },
-                    { hole: 4, par: 3, tee: [44.072748, -92.434836], front: [44.073577, -92.435656], center: [44.073693, -92.435775], back: [44.073808, -92.435914], hazards: [] },
-                    { hole: 5, par: 4, tee: [44.074034, -92.439247], front: [44.074087, -92.442439], center: [44.074133, -92.442610], back: [44.074181, -92.442764], hazards: [] },
+                    { 
+                        hole: 4, 
+                        par: 3, 
+                        tee: [44.072748, -92.434836], 
+                        front: [44.073577, -92.435656], 
+                        center: [44.073693, -92.435775], 
+                        back: [44.073808, -92.435914],
+                        hazards: []
+                    },
+                    { 
+                        hole: 5, 
+                        par: 4, 
+                        tee: [44.074034, -92.439247], 
+                        front: [44.074087, -92.442439], 
+                        center: [44.074133, -92.442610], 
+                        back: [44.074181, -92.442764], 
+                        hazards: []
+                    },
                     { 
                         hole: 6, 
                         par: 3, 
@@ -228,11 +250,19 @@
                         center: [44.074769, -92.441583], 
                         back: [44.074780, -92.441421], 
                         hazards: [
-                            { name: "Water Carry", location: [44.074940693489815, -92.44377158818594] },
-                            { name: "Bunker", front: [44.07491591503698, -92.44176348042092], back: [44.0749091706003, -92.44156700862273] }
+                            { name: "Left Bunker", location: [44.074621, -92.442656] }, 
+                            { name: "Right Water", location: [44.074800, -92.441900] } 
                         ]
                     },
-                    { hole: 8, par: 3, tee: [44.074850, -92.439902], front: [44.074910, -92.438149], center: [44.074950, -92.437983], back: [44.074989, -92.437890], hazards: [] },
+                    { 
+                        hole: 8, 
+                        par: 3, 
+                        tee: [44.074850, -92.439902], 
+                        front: [44.074910, -92.438149], 
+                        center: [44.074950, -92.437983], 
+                        back: [44.074989, -92.437890], 
+                        hazards: []
+                    },
                     { 
                         hole: 9, 
                         par: 4, 
@@ -241,7 +271,7 @@
                         center: [44.075108, -92.433005], 
                         back: [44.075154, -92.432855], 
                         hazards: [
-                            { name: "Bunker", front: [44.07517764620998, -92.43392076595802], back: [44.07522774749392, -92.43358414874744] }
+                            { name: "Left Bunker", location: [44.07517764620998, -92.43392076595802] }
                         ]
                     }
                 ]
@@ -257,11 +287,25 @@
             const proximityThreshold = 15;
             // The proximity threshold for the final hole has also been updated to 50 yards.
             const finalProximityThreshold = 50;
+            let watcherId; // To store the watchPosition ID
 
             // ====================================================================
             // Helper functions to handle the logic
             // ====================================================================
-            
+
+            // SVG icon for a bunker
+            const bunkerIcon = `<svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                <path d="M12 10V6c-2.21 0-4 1.79-4 4h4z"/>
+            </svg>`;
+
+            // SVG icon for water
+            const waterIcon = `<svg class="w-6 h-6 text-cyan-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                <path d="M12 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                <path d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>`;
+
             // Haversine formula to calculate distance between two lat/lon points
             function haversine(lat1, lon1, lat2, lon2) {
                 const R = 6371; // Earth's radius in km
@@ -281,17 +325,11 @@
                 document.getElementById('course-name').textContent = courseData.name;
                 document.getElementById('hole-info').textContent = `Hole ${hole.hole} | Par ${hole.par}`;
                 
-                // Change next hole button text on the last hole
                 const nextBtn = document.getElementById('next-hole-btn');
-                if (currentHoleIndex === courseData.holes.length - 1) {
-                    nextBtn.textContent = 'View Scorecard';
-                    nextBtn.classList.add('bg-green-600', 'text-white');
-                    nextBtn.classList.remove('bg-blue-600');
-                } else {
-                    nextBtn.textContent = 'Next';
-                    nextBtn.classList.add('bg-blue-600');
-                    nextBtn.classList.remove('bg-green-600', 'text-white');
-                }
+                // The "Next" button no longer changes text, as the scorecard has its own button
+                nextBtn.textContent = 'Next';
+                nextBtn.classList.add('bg-blue-600');
+                nextBtn.classList.remove('bg-green-600', 'text-white');
             }
 
             // Function to calculate and display distances to the current hole
@@ -303,8 +341,12 @@
                 const frontEl = document.getElementById('distance-front');
                 const centerEl = document.getElementById('distance-center');
                 const backEl = document.getElementById('distance-back');
-                const hazardsListEl = document.getElementById('hazards-list');
-                const hazardsContainerEl = document.getElementById('hazards-container');
+                
+                // Get the new left and right hazard containers
+                const hazardsLeftEl = document.getElementById('hazards-left');
+                const hazardsRightEl = document.getElementById('hazards-right');
+                hazardsLeftEl.innerHTML = ''; // Clear previous hazard list
+                hazardsRightEl.innerHTML = ''; // Clear previous hazard list
 
                 const distFront = haversine(userLat, userLon, currentHole.front[0], currentHole.front[1]);
                 const distCenter = haversine(userLat, userLon, currentHole.center[0], currentHole.center[1]);
@@ -313,51 +355,68 @@
                 frontEl.textContent = Math.round(distFront);
                 centerEl.textContent = Math.round(distCenter);
                 backEl.textContent = Math.round(distBack);
-
-                // Clear previous hazard list
-                hazardsListEl.innerHTML = '';
                 
-                // Dynamically add new hazard list
+                // Dynamically add new hazard list to the correct side
                 if (currentHole.hazards && currentHole.hazards.length > 0) {
-                    // Show the container if there are hazards
-                    hazardsContainerEl.style.display = 'block';
-                    // Update the hazard container's background for general hazards
-                    hazardsContainerEl.className = "bg-orange-50 dark:bg-orange-900 rounded-2xl p-4 mb-6 shadow-inner transition-colors";
-
                     currentHole.hazards.forEach(hazard => {
                         const hazardDiv = document.createElement('div');
                         let bgClass = '';
                         let textClass = '';
+                        let iconHtml;
+                        let hazardName = '';
+                        let parentElement; // New variable to store the parent container
 
-                        // Determine the color classes based on the hazard name
-                        if (hazard.name.includes("Bunker")) {
+                        const hazardNameLower = hazard.name.toLowerCase();
+                        if (hazardNameLower.includes("bunker")) {
                             bgClass = 'bg-amber-100 dark:bg-amber-900';
                             textClass = 'text-amber-800 dark:text-amber-200';
-                        } else if (hazard.name.includes("Water")) {
+                            iconHtml = bunkerIcon;
+                            hazardName = hazard.name;
+                        } else if (hazardNameLower.includes("water")) {
                             bgClass = 'bg-cyan-100 dark:bg-cyan-900';
                             textClass = 'text-cyan-800 dark:text-cyan-200';
+                            iconHtml = waterIcon;
+                            hazardName = hazard.name;
                         } else {
-                            // Default colors for other hazards
                             bgClass = 'bg-zinc-200 dark:bg-zinc-800';
                             textClass = 'text-zinc-800 dark:text-zinc-200';
+                            iconHtml = '';
+                            hazardName = hazard.name;
                         }
-                        
-                        hazardDiv.className = `flex justify-between items-center my-2 py-2 px-3 rounded-xl shadow-sm ${bgClass} ${textClass}`;
 
-                        // Check if the hazard has front/back coordinates or a single location
+                        // Determine which container to append to and align the text
+                        if (hazardNameLower.includes("left")) {
+                            parentElement = hazardsLeftEl;
+                            hazardDiv.className = `flex justify-start items-center py-2 px-3 rounded-xl shadow-sm ${bgClass} ${textClass}`;
+                        } else if (hazardNameLower.includes("right")) {
+                            parentElement = hazardsRightEl;
+                            hazardDiv.className = `flex justify-end items-center py-2 px-3 rounded-xl shadow-sm ${bgClass} ${textClass}`;
+                        } else {
+                            // If no side is specified, default to the left
+                            parentElement = hazardsLeftEl;
+                            hazardDiv.className = `flex justify-start items-center py-2 px-3 rounded-xl shadow-sm ${bgClass} ${textClass}`;
+                        }
+
                         if (hazard.front && hazard.back) {
                             const distToFront = haversine(userLat, userLon, hazard.front[0], hazard.front[1]);
                             const distToBack = haversine(userLat, userLon, hazard.back[0], hazard.back[1]);
-                            hazardDiv.innerHTML = `<span class="text-sm font-semibold">${hazard.name}</span> <span class="text-lg font-bold">${Math.round(distToFront)} / ${Math.round(distToBack)}<span class="text-xs font-normal"> yds</span></span>`;
+                            hazardDiv.innerHTML = `<div class="flex items-center space-x-2">${iconHtml}<span class="text-sm font-semibold">${hazardName}</span></div> <span class="text-lg font-bold">${Math.round(distToFront)} / ${Math.round(distToBack)}<span class="text-xs font-normal"> yds</span></span>`;
                         } else if (hazard.location) {
                             const distToHazard = haversine(userLat, userLon, hazard.location[0], hazard.location[1]);
-                            hazardDiv.innerHTML = `<span class="text-sm font-semibold">${hazard.name}</span> <span class="text-lg font-bold">${Math.round(distToHazard)}<span class="text-xs font-normal"> yds</span></span>`;
+                            
+                            // Re-orient the content based on the side for better readability
+                            if (hazardNameLower.includes("right")) {
+                                hazardDiv.innerHTML = `<span class="text-lg font-bold">${Math.round(distToHazard)}<span class="text-xs font-normal"> yds</span></span> <div class="flex items-center space-x-2">${iconHtml}<span class="text-sm font-semibold">${hazardName}</span></div>`;
+                            } else {
+                                hazardDiv.innerHTML = `<div class="flex items-center space-x-2">${iconHtml}<span class="text-sm font-semibold">${hazardName}</span></div> <span class="text-lg font-bold">${Math.round(distToHazard)}<span class="text-xs font-normal"> yds</span></span>`;
+                            }
                         }
-                        hazardsListEl.appendChild(hazardDiv);
+                        
+                        // Append the new hazard box to the correct container
+                        if (parentElement) {
+                            parentElement.appendChild(hazardDiv);
+                        }
                     });
-                } else {
-                    // Hide the container if there are no hazards
-                    hazardsContainerEl.style.display = 'none';
                 }
             }
 
@@ -369,22 +428,23 @@
                 document.getElementById('score-entry-title').textContent = `Score Hole ${holeNumber}`;
             }
 
+            // Function to show the main GPS view and hide all other views
+            function showMainView() {
+                document.getElementById('main-view').classList.remove('hidden');
+                document.getElementById('scorecard-view').classList.add('hidden');
+                document.getElementById('score-entry-view').classList.add('hidden');
+            }
+
             // Function to save the score and advance to the next hole
             function saveScoreAndAdvance(score) {
                 scores[currentHoleIndex] = parseInt(score);
                 document.getElementById('score-entry-message').textContent = `Score of ${score} saved for Hole ${courseData.holes[currentHoleIndex].hole}.`;
                 
-                // If the user is on the last hole, show the scorecard after saving the score
-                if (currentHoleIndex === courseData.holes.length - 1) {
-                    showScorecard();
-                } else {
-                    currentHoleIndex++;
-                    document.getElementById('score-entry-view').classList.add('hidden');
-                    document.getElementById('main-view').classList.remove('hidden');
-                    updateUI();
-                    // Also trigger a location update to get fresh distances immediately
-                    navigator.geolocation.getCurrentPosition(displayDistances);
-                }
+                currentHoleIndex++;
+                document.getElementById('score-entry-view').classList.add('hidden');
+                document.getElementById('main-view').classList.remove('hidden');
+                updateUI();
+                navigator.geolocation.getCurrentPosition(displayDistances);
             }
             
             // Main function to watch the user's position and update the UI
@@ -393,15 +453,12 @@
                 if ("geolocation" in navigator) {
                     messageArea.textContent = 'Watching your location...';
 
-                    // Use watchPosition to get continuous location updates
-                    navigator.geolocation.watchPosition(
+                    watcherId = navigator.geolocation.watchPosition(
                         (position) => {
                             const userLat = position.coords.latitude;
                             const userLon = position.coords.longitude;
                             
-                            // First, check the special case for the final hole (Hole 9)
                             if (currentHoleIndex === courseData.holes.length - 1 && scores[currentHoleIndex] === null) {
-                                // We are on Hole 9 and haven't scored yet. Check distance to clubhouse.
                                 const distToClubhouse = haversine(userLat, userLon, clubhouseCoordinates[0], clubhouseCoordinates[1]);
                                 if (distToClubhouse <= finalProximityThreshold) {
                                     showScoreEntry(courseData.holes[currentHoleIndex].hole);
@@ -411,7 +468,6 @@
                                     messageArea.textContent = 'Distances updated.';
                                 }
                             } else if (currentHoleIndex < courseData.holes.length - 1) {
-                                // For all other holes, check distance to the next tee box.
                                 const nextHole = courseData.holes[currentHoleIndex + 1];
                                 const distToNextTee = haversine(userLat, userLon, nextHole.tee[0], nextHole.tee[1]);
                                 
@@ -419,10 +475,13 @@
                                     showScoreEntry(courseData.holes[currentHoleIndex].hole);
                                     messageArea.textContent = `Arrived at the next tee box. Please enter your score for the last hole.`;
                                 } else {
-                                    // If not advancing, just display the current distances
                                     displayDistances(position);
                                     messageArea.textContent = 'Distances updated.';
                                 }
+                            } else {
+                                // For the final hole after scoring, just show the scorecard
+                                showScorecard();
+                                messageArea.textContent = 'Round complete.';
                             }
                         },
                         (error) => {
@@ -458,7 +517,8 @@
                     }
 
                     const scoreRow = document.createElement('div');
-                    scoreRow.className = `grid grid-cols-3 gap-2 text-sm text-zinc-800 dark:text-zinc-200 font-medium transition-colors`;
+                    scoreRow.className = `score-row grid grid-cols-3 gap-2 text-sm text-zinc-800 dark:text-zinc-200 font-medium transition-colors p-2 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 cursor-pointer`;
+                    scoreRow.dataset.holeIndex = i; // Store the index for easy lookup
                     scoreRow.innerHTML = `
                         <span>Hole ${hole.hole}</span>
                         <span class="text-center">${hole.par}</span>
@@ -484,23 +544,23 @@
             // ====================================================================
             // Event listeners for user interaction
             // ====================================================================
+            
+            // Event listener for the new scorecard button
+            document.getElementById('scorecard-btn').addEventListener('click', () => {
+                showScorecard();
+            });
 
             // The "Next" button now triggers the score entry screen
             document.getElementById('next-hole-btn').addEventListener('click', () => {
-                // If a score for the current hole is not yet entered, show the score entry view.
-                if (scores[currentHoleIndex] === null) {
+                if (currentHoleIndex < courseData.holes.length - 1 && scores[currentHoleIndex] !== null) {
+                    currentHoleIndex++;
+                    updateUI();
+                    navigator.geolocation.getCurrentPosition(displayDistances);
+                } else if (scores[currentHoleIndex] === null) {
                     showScoreEntry(courseData.holes[currentHoleIndex].hole);
                 } else {
-                    // Otherwise, if all holes are scored, show the scorecard.
-                    if (currentHoleIndex === courseData.holes.length - 1) {
-                        showScorecard();
-                    } else {
-                        // Or simply advance to the next hole if the score is already in.
-                        currentHoleIndex++;
-                        updateUI();
-                        // Also trigger a location update to get fresh distances immediately
-                        navigator.geolocation.getCurrentPosition(displayDistances);
-                    }
+                    // If all holes are scored, the next button can view the scorecard.
+                    showScorecard();
                 }
             });
 
@@ -521,38 +581,29 @@
                 });
             });
 
+            // The new "Cancel" button on the score entry screen
+            document.getElementById('cancel-score-btn').addEventListener('click', showMainView);
+
+            // The new "Back to Course" button on the scorecard view
+            document.getElementById('back-to-course-btn').addEventListener('click', showMainView);
+
             // "Start New Round" button on the scorecard
             document.getElementById('start-new-round-btn').addEventListener('click', startNewRound);
-
-            // ====================================================================
-            // Dark Mode Toggle Functionality
-            // ====================================================================
-            const themeToggleBtn = document.getElementById('theme-toggle-btn');
-            const themeIcon = document.getElementById('theme-icon');
-            const body = document.body;
-
-            // Check for saved theme preference in local storage or system preference
-            const storedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-            // Set initial theme
-            if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-                body.classList.add('dark');
-                themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-            } else {
-                body.classList.remove('dark');
-                themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
-            }
-
-            // Handle theme toggle on button click
-            themeToggleBtn.addEventListener('click', () => {
-                body.classList.toggle('dark');
-                if (body.classList.contains('dark')) {
-                    localStorage.setItem('theme', 'dark');
-                    themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-                } else {
-                    localStorage.setItem('theme', 'light');
-                    themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+            
+            // Event listener for clicking on a score row in the scorecard
+            document.getElementById('scores-list').addEventListener('click', (event) => {
+                let target = event.target;
+                // Traverse up to find the score-row element
+                while (target && !target.classList.contains('score-row')) {
+                    target = target.parentElement;
+                }
+                
+                if (target) {
+                    const holeIndex = parseInt(target.dataset.holeIndex);
+                    if (!isNaN(holeIndex)) {
+                        currentHoleIndex = holeIndex; // Set the current hole to the one we want to edit
+                        showScoreEntry(courseData.holes[holeIndex].hole);
+                    }
                 }
             });
 
