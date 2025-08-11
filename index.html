@@ -113,8 +113,8 @@
                     Next
                 </button>
             </div>
-            <!-- Shot Tracker Button -->
-            <button id="shot-tracker-btn" class="w-full mt-4 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+            <!-- Shot Tracker Button with new data-state attribute -->
+            <button id="shot-tracker-btn" class="w-full mt-4 font-bold py-3 px-4 rounded-full shadow-md transition-colors" data-shot-state="idle">
                 Start Shot
             </button>
         </div>
@@ -624,20 +624,34 @@
             });
 
             // ====================================================================
-            // Shot Tracker Event Listener
+            // Shot Tracker Event Listener - CORRECTED LOGIC
             // ====================================================================
             const shotTrackerBtn = document.getElementById('shot-tracker-btn');
             const shotDistanceDisplay = document.getElementById('shot-distance-display');
             const shotDistanceEl = document.getElementById('shot-distance');
+
+            function updateShotTrackerButton(state) {
+                shotTrackerBtn.dataset.shotState = state;
+                if (state === 'tracking') {
+                    shotTrackerBtn.textContent = 'End Shot';
+                    shotTrackerBtn.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-700', 'dark:text-zinc-300');
+                    shotTrackerBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+                } else {
+                    shotTrackerBtn.textContent = 'Start Shot';
+                    shotTrackerBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+                    shotTrackerBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-700', 'dark:text-zinc-300');
+                }
+            }
+            
+            // Initial button state
+            updateShotTrackerButton('idle');
             
             shotTrackerBtn.addEventListener('click', () => {
                 // If a shot is not in progress, start it
                 if (!shotStartLocation) {
                     navigator.geolocation.getCurrentPosition((position) => {
                         shotStartLocation = [position.coords.latitude, position.coords.longitude];
-                        shotTrackerBtn.textContent = 'End Shot';
-                        shotTrackerBtn.classList.remove('bg-zinc-200', 'text-zinc-700');
-                        shotTrackerBtn.classList.add('bg-green-600', 'text-white');
+                        updateShotTrackerButton('tracking');
                         document.getElementById('message-area').textContent = 'Shot started. Hit the button again at your ball.';
                         shotDistanceDisplay.classList.add('hidden'); // Hide any previous result
                     }, (error) => {
@@ -656,9 +670,7 @@
 
                         // Reset the state
                         shotStartLocation = null;
-                        shotTrackerBtn.textContent = 'Start Shot';
-                        shotTrackerBtn.classList.remove('bg-green-600', 'text-white');
-                        shotTrackerBtn.classList.add('bg-zinc-200', 'text-zinc-700');
+                        updateShotTrackerButton('idle');
                         document.getElementById('message-area').textContent = ''; // Clear the message
                     }, (error) => {
                         document.getElementById('message-area').textContent = 'Error ending shot: ' + error.message;
