@@ -97,6 +97,13 @@
             <!-- Loading and Error Messages -->
             <p id="message-area" class="text-center text-sm font-medium h-6 text-zinc-600 dark:text-zinc-400"></p>
 
+            <!-- Shot Tracker Display (hidden by default) -->
+            <div id="shot-distance-display" class="hidden text-center mt-4">
+                <p class="text-md font-semibold text-zinc-600 dark:text-zinc-300">Shot Distance</p>
+                <p id="shot-distance" class="text-3xl font-black text-teal-600 dark:text-teal-400 mt-1">--</p>
+                <p class="text-xs text-zinc-400 dark:text-zinc-500">yards</p>
+            </div>
+
             <!-- Navigation and Actions -->
             <div class="flex items-center justify-between gap-4 mt-6">
                 <button id="prev-hole-btn" class="flex-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
@@ -106,6 +113,10 @@
                     Next
                 </button>
             </div>
+            <!-- Shot Tracker Button -->
+            <button id="shot-tracker-btn" class="w-full mt-4 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                Start Shot
+            </button>
         </div>
 
         <!-- Score Entry View (hidden by default) -->
@@ -288,6 +299,11 @@
             // The proximity threshold for the final hole has also been updated to 50 yards.
             const finalProximityThreshold = 50;
             let watcherId; // To store the watchPosition ID
+            
+            // ====================================================================
+            // Shot Tracker specific variable
+            // ====================================================================
+            let shotStartLocation = null;
 
             // ====================================================================
             // Helper functions to handle the logic
@@ -604,6 +620,49 @@
                         currentHoleIndex = holeIndex; // Set the current hole to the one we want to edit
                         showScoreEntry(courseData.holes[holeIndex].hole);
                     }
+                }
+            });
+
+            // ====================================================================
+            // Shot Tracker Event Listener
+            // ====================================================================
+            const shotTrackerBtn = document.getElementById('shot-tracker-btn');
+            const shotDistanceDisplay = document.getElementById('shot-distance-display');
+            const shotDistanceEl = document.getElementById('shot-distance');
+            
+            shotTrackerBtn.addEventListener('click', () => {
+                // If a shot is not in progress, start it
+                if (!shotStartLocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        shotStartLocation = [position.coords.latitude, position.coords.longitude];
+                        shotTrackerBtn.textContent = 'End Shot';
+                        shotTrackerBtn.classList.remove('bg-zinc-200', 'text-zinc-700');
+                        shotTrackerBtn.classList.add('bg-green-600', 'text-white');
+                        document.getElementById('message-area').textContent = 'Shot started. Hit the button again at your ball.';
+                        shotDistanceDisplay.classList.add('hidden'); // Hide any previous result
+                    }, (error) => {
+                        document.getElementById('message-area').textContent = 'Error starting shot: ' + error.message;
+                    });
+                } else {
+                    // If a shot is in progress, end it and calculate the distance
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const endLat = position.coords.latitude;
+                        const endLon = position.coords.longitude;
+
+                        const distance = haversine(shotStartLocation[0], shotStartLocation[1], endLat, endLon);
+                        
+                        shotDistanceEl.textContent = Math.round(distance);
+                        shotDistanceDisplay.classList.remove('hidden');
+
+                        // Reset the state
+                        shotStartLocation = null;
+                        shotTrackerBtn.textContent = 'Start Shot';
+                        shotTrackerBtn.classList.remove('bg-green-600', 'text-white');
+                        shotTrackerBtn.classList.add('bg-zinc-200', 'text-zinc-700');
+                        document.getElementById('message-area').textContent = ''; // Clear the message
+                    }, (error) => {
+                        document.getElementById('message-area').textContent = 'Error ending shot: ' + error.message;
+                    });
                 }
             });
 
