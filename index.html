@@ -35,7 +35,7 @@
             <!-- Controls and Settings -->
             <div class="flex justify-between items-center mb-6">
                 <!-- Scorecard Button -->
-                <button id="scorecard-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                <button id="scorecard-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
                     <svg class="scorecard-icon w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -52,7 +52,7 @@
                 </div>
                 
                 <!-- Wake Lock Toggle Button -->
-                <button id="wake-lock-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                <button id="wake-lock-btn" class="p-2 rounded-full text-zinc-800 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
                     <svg id="wake-lock-icon" class="w-6 h-6 icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -99,14 +99,14 @@
 
             <!-- Shot Tracker Display (hidden by default) -->
             <div id="shot-distance-display" class="hidden text-center mt-4">
-                <p class="text-md font-semibold text-zinc-600 dark:text-zinc-300">Shot Distance</p>
+                <p class="text-md font-semibold text-zinc-600 dark:text-zinc-300">Last Shot Distance</p>
                 <p id="shot-distance" class="text-3xl font-black text-teal-600 dark:text-teal-400 mt-1">--</p>
                 <p class="text-xs text-zinc-400 dark:text-zinc-500">yards</p>
             </div>
 
             <!-- Navigation and Actions -->
             <div class="flex items-center justify-between gap-4 mt-6">
-                <button id="prev-hole-btn" class="flex-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                <button id="prev-hole-btn" class="flex-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
                     Previous
                 </button>
                 <button id="next-hole-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors transform hover:scale-105">
@@ -114,7 +114,7 @@
                 </button>
             </div>
             <!-- Shot Tracker Button with new data-state attribute -->
-            <button id="shot-tracker-btn" class="w-full mt-4 font-bold py-3 px-4 rounded-full shadow-md transition-colors" data-shot-state="idle">
+            <button id="shot-tracker-btn" class="w-full mt-4 font-bold py-3 px-4 rounded-full shadow-md transition-colors bg-blue-600 text-white">
                 Start Shot
             </button>
         </div>
@@ -124,19 +124,19 @@
             <div>
                 <h1 id="score-entry-title" class="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 text-center mb-8">Score Hole 1</h1>
                 <div class="grid grid-cols-3 gap-4">
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="1">1</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="2">2</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="3">3</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="4">4</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="5">5</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="6">6</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="7">7</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="8">8</button>
-                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors" data-score="9">9</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="1">1</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="2">2</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="3">3</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="4">4</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="5">5</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="6">6</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="7">7</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="8">8</button>
+                    <button class="score-btn bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-6 rounded-full text-4xl shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors" data-score="9">9</button>
                 </div>
             </div>
             <p id="score-entry-message" class="text-center text-sm font-medium h-6 mt-6 text-zinc-600 dark:text-zinc-400"></p>
-            <button id="cancel-score-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+            <button id="cancel-score-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
                 Cancel
             </button>
         </div>
@@ -162,7 +162,7 @@
                     <span class="text-xl font-bold">Total Score</span>
                     <span id="total-score" class="text-4xl font-black">0</span>
                 </div>
-                <button id="back-to-course-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-600 transition-colors">
+                <button id="back-to-course-btn" class="mt-4 w-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold py-3 px-4 rounded-full shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors">
                     Back to Course
                 </button>
                 <button id="start-new-round-btn" class="mt-4 w-full bg-red-600 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:bg-red-700 transition-colors transform hover:scale-105">
@@ -629,17 +629,17 @@
             const shotTrackerBtn = document.getElementById('shot-tracker-btn');
             const shotDistanceDisplay = document.getElementById('shot-distance-display');
             const shotDistanceEl = document.getElementById('shot-distance');
-
+            
             function updateShotTrackerButton(state) {
-                shotTrackerBtn.dataset.shotState = state;
+                // Remove previous state classes
+                shotTrackerBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'bg-red-600', 'hover:bg-red-700');
+                
                 if (state === 'tracking') {
                     shotTrackerBtn.textContent = 'End Shot';
-                    shotTrackerBtn.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-700', 'dark:text-zinc-300');
-                    shotTrackerBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+                    shotTrackerBtn.classList.add('bg-red-600', 'hover:bg-red-700', 'text-white');
                 } else {
                     shotTrackerBtn.textContent = 'Start Shot';
-                    shotTrackerBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
-                    shotTrackerBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-700', 'dark:text-zinc-300');
+                    shotTrackerBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
                 }
             }
             
@@ -671,7 +671,7 @@
                         // Reset the state
                         shotStartLocation = null;
                         updateShotTrackerButton('idle');
-                        document.getElementById('message-area').textContent = ''; // Clear the message
+                        document.getElementById('message-area').textContent = `Shot distance: ${Math.round(distance)} yards.`;
                     }, (error) => {
                         document.getElementById('message-area').textContent = 'Error ending shot: ' + error.message;
                     });
